@@ -1,0 +1,7 @@
+#algolia-search .container {
+  border: 3px solid yellow;
+  padding: 15px;
+}
+#algolia-serch .hot-stuff {
+  color: green;
+}

@@ -1,0 +1,115 @@
+<?php
+/**
+ * @file
+ * IG Commerce Utility Algolia Module.
+ * @author ryan.ray.neff@fluke.com
+ *
+ * This module is intended as a "blank-slate" example for Algolia/Billow
+ * to implement their search. Feel free to alter this module as you see fit.
+ * The "examples" module covers many topics in depth, but if you're just slapping
+ * some html/cs/js on a page, this should get you most of the way there.
+ * This module can be turned on or off at admin/modules.  
+ *
+ */
+
+/**
+ * Declare what blocks are provided by this module.
+ * Implements hook_block_info().
+ *
+ * This block can be added to every page through admin/structure/block
+ * It should likely be placed in the "Search block" region of the page.
+ */
+function igcommerce_utility_algolia_block_info() {
+  $blocks['algolia_search'] = array(
+    'info' => t('IGCommerce Algolia Search'),
+    'cache' => DRUPAL_NO_CACHE
+  );
+  return $blocks;
+}
+
+/**
+ * Define what the block is going to look like.
+ * Implements hook_block_view().
+ */
+function igcommerce_utility_algolia_block_view($delta) {
+  $block = array();
+  switch ($delta) {
+    case 'algolia_search':
+      $block['content'] = igcommerce_utility_algolia_build_block();
+    break;
+  }
+  return $block;
+}
+
+/**
+ * Implements hook_theme().
+ *
+ * This declares what html template we should be pulling in. 
+ * It is best practice to do all your php processing in the .module file, and 
+ * then only send the variables to the template for output.
+ */
+function igcommerce_utility_algolia_theme() {   
+  $module_path = drupal_get_path('module', 'igcommerce_utility_algolia');
+  $base = array(
+    'path' => $module_path . "/templates",
+  );
+  return array(
+    'algolia_search' => $base + array(
+      'template' => 'algolia-search',
+      'variables' => array('content' => NULL)
+    )
+  );
+}
+
+/**
+ * Returns formatted HTML for the Algolia search block.
+ *
+ * Uses some Drupal basics, l(), t(), theme(), drupal_add_js and drupal_add_css
+ */
+function igcommerce_utility_algolia_build_block() {
+  
+  $content = "";
+  // Use t() function for translation
+  $link_text = t("link text goes here");
+  $link_href = t("link_target_goes here");
+  // We try to avoid translating classes
+  $link_class = "example-class";
+  // Load your content in an array
+  $content = array(
+    'title' => "Algolia blank block",
+    'body-chunker' => array(
+      // Use l() for links
+      'link' => l($link_text, '$link_href', array('attributes' => array('class' => array($link_class)))),
+      'copy' => 'Big ol` chunk a text. Or whetevs.'
+    )
+  );
+  // You can turn on the 'devel' module, and use dpm() for debugging.
+  // dpm($content, 'Heres what youve got in your $content array');
+
+  // There's a few ways to add .js: https://api.drupal.org/api/drupal/includes%21common.inc/function/drupal_add_js/7.x
+  // If you've got bigger files, you can throw them in the js folder in this module.
+  // You can find a pretty good example using "the drupal way" here:
+  // sites/all/modules/custom/igcommerce_utility/modules/igcommerce_utility_product_tocs/js/igcommerce_utility_product_tocs.js
+  // For quick n dirty dev work, i usually go the inline route:
+  drupal_add_js(
+    'jQuery(document).ready(function () {
+      console.log("Algolia module is adding js");
+    });', 
+    array(
+      'type' => 'inline',
+      'scope' => 'footer',
+      'weight' => 53,
+    ));
+
+  // Adding css is fairly straightforward:
+  // https://api.drupal.org/api/drupal/includes%21common.inc/function/drupal_add_css/7.x
+  // You can wireup a gulp workflow that pulls in many of the core themeing variables/mixins if your really ambitious.
+  // the module igcommerce_utility_homepage_v2 does this - you can likely clone the gulpfile/package.json to this module.
+  drupal_add_css(drupal_get_path('module', 'igcommerce_utility_algolia') . '/css/algolia-search.css');
+
+  // Run all your content through the template, and send it to be output.
+  return theme('algolia_search', array('content' => $content));
+}
+
+
+

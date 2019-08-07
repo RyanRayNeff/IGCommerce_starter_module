@@ -1,0 +1,6 @@
+name = IG Commerce Utility - Algolia Search
+description = Utility module for IG commerce to create the Algolia Search block.
+core = "7.x"
+package = IG Commerce
+
+dependencies[] = igcommerce_utility
